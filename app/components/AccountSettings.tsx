@@ -16,7 +16,7 @@ type AccountData = { profile: Profile; email: string; agendas: Agenda[] };
 type Member = { name: string; email: string; role: string; status: string; calendar: boolean; initials: string };
 
 const initialMembers: Member[] = [
-  { name: "Xavier Soto", email: "xbuenano@sotomayorconsulting.com", role: "Propietario", status: "Activo", calendar: true, initials: "XS" },
+  { name: "Xavier Buenano", email: "xbuenano@sotomayorconsulting.com", role: "Propietario", status: "Activo", calendar: true, initials: "XB" },
   { name: "Ana Torres", email: "ana@sotomayorconsulting.com", role: "Agente", status: "Activo", calendar: true, initials: "AT" },
   { name: "Carlos Mendoza", email: "carlos@sotomayorconsulting.com", role: "Agente", status: "Activo", calendar: true, initials: "CM" },
 ];

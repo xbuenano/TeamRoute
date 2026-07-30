@@ -75,8 +75,8 @@ function Dashboard() {
             <div><strong>Google Calendar</strong><small><i /> 3 de 4 conectados</small></div>
           </div>
           <div className="profile">
-            <span className="avatar avatar-dark">XS</span>
-            <div><strong>Xavier Soto</strong><small>Administrador</small></div>
+            <span className="avatar avatar-dark">XB</span>
+            <div><strong>Xavier Buenano</strong><small>Administrador</small></div>
             <span className="more">•••</span>
           </div>
         </div>
