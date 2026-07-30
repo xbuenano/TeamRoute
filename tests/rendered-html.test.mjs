@@ -26,7 +26,7 @@ async function render(pathname) {
   );
 }
 
-test("renders the TeamRoute administration dashboard", async () => {
+test("protects the TeamRoute administration dashboard with an access gate", async () => {
   const response = await render("/");
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -34,8 +34,17 @@ test("renders the TeamRoute administration dashboard", async () => {
   const html = await response.text();
   assert.match(html, /TeamRoute/);
   assert.match(html, /Intelligent meeting routing/);
-  assert.match(html, /Agendas Round Robin/);
+  assert.match(html, /Verificando acceso seguro/);
   assert.doesNotMatch(html, /vinext-starter|Your site is taking shape/i);
+});
+
+test("renders login and registration access", async () => {
+  const response = await render("/login");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Iniciar sesión/);
+  assert.match(html, /Registrarme/);
+  assert.match(html, /Mínimo 12 caracteres/);
 });
 
 test("renders the phased public booking experience", async () => {

@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "./index";
 import { organizations, profileAgendas, userProfiles, users } from "./schema";
 
@@ -47,10 +47,11 @@ export async function ensureDefaultProfile() {
   await db.insert(userProfiles).values({
     id: profileId,
     userId,
-    fullName: "Xavier Soto",
+    fullName: "Xavier Buenano",
     publicHandle: "xaviersoto",
     welcomeMessage: "Agenda una reunión con nuestro equipo y descubre la mejor ruta para tu empresa.",
   }).onConflictDoNothing();
+  await db.update(userProfiles).set({ fullName: "Xavier Buenano", updatedAt: new Date() }).where(and(eq(userProfiles.id, profileId), eq(userProfiles.fullName, "Xavier Soto")));
   await db.insert(profileAgendas).values([
     { id: "ac44f781-2d70-4b03-af15-9c1f9ce96e6c", profileId, title: "Sesión estratégica del equipo", bookingSlug: "consulta-inicial-llc", durationMinutes: 60, position: 0 },
     { id: "dd4e032b-05b3-47ba-a45b-9ff7cf34f103", profileId, title: "Diagnóstico y ruta de implementación", bookingSlug: "diagnostico-equipo", durationMinutes: 45, position: 1 },
@@ -58,15 +59,16 @@ export async function ensureDefaultProfile() {
   return db;
 }
 
-export async function readProfile() {
+export async function readProfile(currentUserId: string) {
   const db = await ensureDefaultProfile();
-  const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.id, profileId));
-  const agendas = await db.select().from(profileAgendas).where(eq(profileAgendas.profileId, profileId)).orderBy(asc(profileAgendas.position));
+  const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, currentUserId));
+  const agendas = profile ? await db.select().from(profileAgendas).where(eq(profileAgendas.profileId, profile.id)).orderBy(asc(profileAgendas.position)) : [];
   if (!profile) throw new Error("No fue posible cargar el perfil.");
-  return { profile, email: "xbuenano@sotomayorconsulting.com", agendas };
+  const [user] = await db.select({ email: users.email }).from(users).where(eq(users.id, currentUserId));
+  return { profile, email: user?.email ?? "", agendas };
 }
 
-export async function updateProfile(input: ProfileInput) {
+export async function updateProfile(currentUserId: string, input: ProfileInput) {
   const db = await ensureDefaultProfile();
   const values: Record<string, unknown> = { updatedAt: new Date() };
   if (input.fullName !== undefined) {
@@ -92,13 +94,15 @@ export async function updateProfile(input: ProfileInput) {
   if (input.theme !== undefined) values.theme = input.theme;
   if (input.accentColor !== undefined) values.accentColor = input.accentColor;
   if (input.buttonColor !== undefined) values.buttonColor = input.buttonColor;
-  const [profile] = await db.update(userProfiles).set(values).where(eq(userProfiles.id, profileId)).returning();
+  const [profile] = await db.update(userProfiles).set(values).where(eq(userProfiles.userId, currentUserId)).returning();
   return profile;
 }
 
-export async function setAgendaVisibility(agendaId: string, isVisible: boolean) {
+export async function setAgendaVisibility(currentUserId: string, agendaId: string, isVisible: boolean) {
   const db = await ensureDefaultProfile();
-  const [agenda] = await db.update(profileAgendas).set({ isVisible }).where(eq(profileAgendas.id, agendaId)).returning();
+  const [profile] = await db.select({ id: userProfiles.id }).from(userProfiles).where(eq(userProfiles.userId, currentUserId));
+  if (!profile) throw new Error("No fue posible cargar el perfil.");
+  const [agenda] = await db.update(profileAgendas).set({ isVisible }).where(and(eq(profileAgendas.id, agendaId), eq(profileAgendas.profileId, profile.id))).returning();
   if (!agenda) throw new Error("La agenda indicada no existe.");
   return agenda;
 }

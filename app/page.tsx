@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { BookingFlow } from "./components/BookingFlow";
 import { RoundRobinBuilder } from "./components/RoundRobinBuilder";
 import { AccountSettings } from "./components/AccountSettings";
+import { AuthGate } from "./components/AuthGate";
 
 type View = "overview" | "bookings" | "agents" | "services" | "builder" | "settings" | "public";
 
@@ -36,6 +37,10 @@ const days = [
 const slots = ["09:00", "09:30", "10:30", "11:00", "13:30", "14:00", "15:30", "16:00"];
 
 export default function Home() {
+  return <AuthGate><Dashboard /></AuthGate>;
+}
+
+function Dashboard() {
   const [view, setView] = useState<View>("overview");
   const [selectedDay, setSelectedDay] = useState(2);
   const [selectedSlot, setSelectedSlot] = useState("10:30");
