@@ -89,10 +89,10 @@ export default function Home() {
           </div>
         </header>
 
-        {view === "overview" && <Overview onPublic={() => setView("public")} />}
+        {view === "overview" && <Overview onPublic={() => setView("public")} onEdit={() => setView("builder")} />}
         {view === "bookings" && <Bookings />}
         {view === "agents" && <Agents />}
-        {view === "services" && <><Services onPublic={() => setView("public")} onEdit={() => setView("builder")} /><button className="builder-fab" onClick={() => setView("builder")}>⚙ Editar agenda completa</button></>}
+        {view === "services" && <Services onEdit={() => setView("builder")} />}
         {view === "builder" && <RoundRobinBuilder onClose={() => setView("services")} onPreview={() => setView("public")} />}
         {view === "public" && (
           <PublicBooking
@@ -110,7 +110,7 @@ export default function Home() {
   );
 }
 
-function Overview({ onPublic }: { onPublic: () => void }) {
+function Overview({ onPublic, onEdit }: { onPublic: () => void; onEdit: () => void }) {
   return (
     <div className="content">
       <section className="welcome">
@@ -123,6 +123,11 @@ function Overview({ onPublic }: { onPublic: () => void }) {
         <Metric label="ESTA SEMANA" value="24" trend="+8%" note="vs. semana anterior" icon="↗" />
         <Metric label="TASA DE OCUPACIÓN" value="76%" trend="+4%" note="promedio del equipo" icon="◎" />
         <Metric label="AGENTES ACTIVOS" value="3/4" note="1 necesita reconectar" icon="◉" warning />
+      </section>
+
+      <section className="active-agendas-block">
+        <div className="active-agendas-head"><div><h3>Agendas activas</h3><p>Enlaces Round Robin disponibles para compartir.</p></div><button onClick={onEdit}>＋ Nueva agenda</button></div>
+        <AgendaCards onEdit={onEdit} compact />
       </section>
 
       <section className="dashboard-grid">
@@ -198,16 +203,30 @@ function Agents() {
   return <div className="content"><section className="section-intro"><div><h2>Tu equipo</h2><p>Gestiona quién participa en las rotaciones.</p></div><button className="primary-button">＋ Invitar agente</button></section><section className="agent-cards">{agents.map(a => <article className="panel agent-card" key={a.name}><div className="agent-card-head"><span className="avatar large" style={{ background: a.color }}>{a.initials}</span><button className="row-more">•••</button></div><h3>{a.name}</h3><p>{a.role}</p><span className={`status ${a.status.toLowerCase().replace(" ", "-")}`}><i />{a.status}</span><div className="agent-stats"><span><b>{a.meetings}</b><small>Esta semana</small></span><span><b>{a.name === "Diego Lara" ? "0" : "2"}</b><small>Rotaciones</small></span></div><footer><span className={a.name === "Diego Lara" ? "calendar-off" : "calendar-on"}>G</span>{a.name === "Diego Lara" ? "Reconectar calendario" : "Calendar conectado"}</footer></article>)}</section></div>;
 }
 
-function Services({ onPublic, onEdit }: { onPublic: () => void; onEdit: () => void }) {
-  const [slug, setSlug] = useState("consulta-inicial-llc");
-  const [copied, setCopied] = useState(false);
-  const publicUrl = `https://teamroute-app.xbuenano.chatgpt.site/book/${slug}`;
-  async function copyLink() {
-    await navigator.clipboard?.writeText(publicUrl);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+function Services({ onEdit }: { onEdit: () => void }) {
+  return <div className="content">
+    <section className="section-intro"><div><h2>Agendas Round Robin</h2><p>Administra los enlaces activos y la configuración de cada equipo.</p></div><button className="primary-button" onClick={onEdit}>＋ Crear agenda Round Robin</button></section>
+    <AgendaCards onEdit={onEdit} />
+  </div>;
+}
+
+function AgendaCards({ onEdit, compact = false }: { onEdit: () => void; compact?: boolean }) {
+  const [menu, setMenu] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+  const agendas = [
+    { id: "estrategica", name: "Sesión estratégica del equipo", slug: "consulta-inicial-llc", duration: "60 min", agents: ["AT", "CM", "MP"], color: "#6d3ce5" },
+    { id: "diagnostico", name: "Diagnóstico y ruta de implementación", slug: "diagnostico-equipo", duration: "45 min", agents: ["AT", "DL"], color: "#0f766e" },
+  ];
+  async function copy(id: string, slug: string) {
+    await navigator.clipboard?.writeText(`https://teamroute-app.xbuenano.chatgpt.site/book/${slug}`);
+    setCopied(id); setMenu(null); window.setTimeout(() => setCopied(null), 1600);
   }
-  return <div className="content"><section className="section-intro"><div><h2>Agendas Round Robin</h2><p>Cada agenda distribuye automáticamente las reservas entre los agentes disponibles del equipo.</p></div><button className="primary-button">＋ Crear agenda Round Robin</button></section><article className="round-robin-focus"><span className="focus-icon">⇄</span><div><p className="eyebrow">PRODUCTO ESPECIALIZADO</p><h3>Una sola modalidad: Round Robin para equipos</h3><p>TeamRoute asigna cada reserva a un único agente según disponibilidad, prioridad y última asignación. No existen reuniones colectivas ni agendas individuales.</p></div><span className="focus-badge">ÚNICA MODALIDAD</span></article><article className="share-link-card"><div><span className="live-badge"><i /> ENLACE PÚBLICO ACTIVO</span><h3>Comparte la agenda del equipo</h3><p>Personaliza la terminación del enlace, cópialo o abre la experiencia del cliente.</p></div><div className="public-url-editor"><span>teamroute-app.xbuenano.chatgpt.site/book/</span><input aria-label="Identificador del enlace público" value={slug} onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} /><button onClick={copyLink}>{copied ? "✓ Copiado" : "Copiar enlace"}</button><a href={`/book/${slug}`} target="_blank">Abrir ↗</a></div></article><article className="panel robin-agenda-card"><div className="robin-agenda-main"><span className="service-symbol violet">⇄</span><div><span className="live-badge"><i /> ROUND ROBIN ACTIVO</span><h3>Sesión estratégica del equipo</h3><p>30 min · Google Meet · 3 agentes · Prioridad estricta</p><small className="service-url">/book/{slug}</small></div></div><div className="rotation-preview"><p>ORDEN DE ASIGNACIÓN</p><div><span className="avatar" style={{ background: "#7c3aed" }}>AT</span><span className="avatar" style={{ background: "#0f766e" }}>CM</span><span className="avatar" style={{ background: "#c2410c" }}>MP</span><small>Disponibilidad → Prioridad → Última asignación</small></div></div><div className="service-actions"><a href={`/book/${slug}`} target="_blank">Abrir agenda ↗</a><button className="secondary-button">Configurar rotación</button><button className="row-more">•••</button></div></article></div>;
+  return <div className={`agenda-card-grid ${compact ? "compact" : ""}`}>{agendas.map((agenda) => <article className="agenda-box" key={agenda.id}>
+    <header><span className="agenda-box-icon" style={{ background: agenda.color }}>⇄</span><div><span className="live-badge"><i /> ROUND ROBIN ACTIVO</span><h3>{agenda.name}</h3></div><div className="agenda-menu-wrap"><button className="agenda-menu-trigger" aria-label={`Opciones de ${agenda.name}`} onClick={() => setMenu(menu === agenda.id ? null : agenda.id)}>•••</button>{menu === agenda.id && <div className="agenda-dropdown"><button onClick={() => copy(agenda.id, agenda.slug)}>⧉ Copiar enlace</button><button onClick={onEdit}>✎ Editar agenda</button></div>}</div></header>
+    <p>{agenda.duration} · Google Meet · {agenda.agents.length} agentes · Prioridad estricta</p>
+    <div className="agenda-url">teamroute-app.xbuenano.chatgpt.site/book/{agenda.slug}</div>
+    <footer><div className="agenda-hosts">{agenda.agents.map((agent, index) => <span key={agent} style={{ background: ["#7c3aed","#0f766e","#c2410c"][index] }}>{agent}</span>)}</div><a href={`/book/${agenda.slug}`} target="_blank">Abrir agenda ↗</a>{copied === agenda.id && <b>✓ Enlace copiado</b>}</footer>
+  </article>)}</div>;
 }
 
 function PublicBooking({ selectedDay, setSelectedDay, selectedSlot, setSelectedSlot, confirmed, onConfirm, onBack }: { selectedDay: number; setSelectedDay: (n: number) => void; selectedSlot: string; setSelectedSlot: (s: string) => void; confirmed: boolean; onConfirm: () => void; onBack: () => void }) {
