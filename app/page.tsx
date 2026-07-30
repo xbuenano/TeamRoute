@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { BookingFlow } from "./components/BookingFlow";
+import { RoundRobinBuilder } from "./components/RoundRobinBuilder";
 
-type View = "overview" | "bookings" | "agents" | "services" | "public";
+type View = "overview" | "bookings" | "agents" | "services" | "builder" | "public";
 
 const navItems: { id: View; label: string; icon: string }[] = [
   { id: "overview", label: "Resumen", icon: "⌂" },
@@ -38,7 +39,7 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState(2);
   const [selectedSlot, setSelectedSlot] = useState("10:30");
   const [confirmed, setConfirmed] = useState(false);
-  const title = useMemo(() => navItems.find((item) => item.id === view)?.label ?? "Reserva pública", [view]);
+  const title = useMemo(() => view === "builder" ? "Editar agenda Round Robin" : navItems.find((item) => item.id === view)?.label ?? "Reserva pública", [view]);
 
   return (
     <main className="app-shell">
@@ -91,7 +92,8 @@ export default function Home() {
         {view === "overview" && <Overview onPublic={() => setView("public")} />}
         {view === "bookings" && <Bookings />}
         {view === "agents" && <Agents />}
-        {view === "services" && <Services onPublic={() => setView("public")} />}
+        {view === "services" && <><Services onPublic={() => setView("public")} onEdit={() => setView("builder")} /><button className="builder-fab" onClick={() => setView("builder")}>⚙ Editar agenda completa</button></>}
+        {view === "builder" && <RoundRobinBuilder onClose={() => setView("services")} onPreview={() => setView("public")} />}
         {view === "public" && (
           <PublicBooking
             selectedDay={selectedDay}
@@ -196,7 +198,7 @@ function Agents() {
   return <div className="content"><section className="section-intro"><div><h2>Tu equipo</h2><p>Gestiona quién participa en las rotaciones.</p></div><button className="primary-button">＋ Invitar agente</button></section><section className="agent-cards">{agents.map(a => <article className="panel agent-card" key={a.name}><div className="agent-card-head"><span className="avatar large" style={{ background: a.color }}>{a.initials}</span><button className="row-more">•••</button></div><h3>{a.name}</h3><p>{a.role}</p><span className={`status ${a.status.toLowerCase().replace(" ", "-")}`}><i />{a.status}</span><div className="agent-stats"><span><b>{a.meetings}</b><small>Esta semana</small></span><span><b>{a.name === "Diego Lara" ? "0" : "2"}</b><small>Rotaciones</small></span></div><footer><span className={a.name === "Diego Lara" ? "calendar-off" : "calendar-on"}>G</span>{a.name === "Diego Lara" ? "Reconectar calendario" : "Calendar conectado"}</footer></article>)}</section></div>;
 }
 
-function Services({ onPublic }: { onPublic: () => void }) {
+function Services({ onPublic, onEdit }: { onPublic: () => void; onEdit: () => void }) {
   const [slug, setSlug] = useState("consulta-inicial-llc");
   const [copied, setCopied] = useState(false);
   const publicUrl = `https://teamroute-app.xbuenano.chatgpt.site/book/${slug}`;
