@@ -9,7 +9,7 @@ const navItems: { id: View; label: string; icon: string }[] = [
   { id: "overview", label: "Resumen", icon: "⌂" },
   { id: "bookings", label: "Reservas", icon: "▣" },
   { id: "agents", label: "Agentes", icon: "◎" },
-  { id: "services", label: "Tipos de reunión", icon: "◇" },
+  { id: "services", label: "Agendas Round Robin", icon: "⇄" },
 ];
 
 const agents = [
@@ -20,10 +20,10 @@ const agents = [
 ];
 
 const meetings = [
-  { time: "09:00", title: "Consulta inicial LLC", client: "Sofía Andrade", agent: "Ana Torres", tone: "violet" },
-  { time: "10:30", title: "Asesoría tributaria", client: "Daniel Romero", agent: "Carlos Mendoza", tone: "teal" },
-  { time: "13:00", title: "Apertura bancaria", client: "Lucía Reyes", agent: "María Paz", tone: "orange" },
-  { time: "15:30", title: "Consulta inicial LLC", client: "Andrés Vega", agent: "Ana Torres", tone: "violet" },
+  { time: "09:00", title: "Sesión estratégica", client: "Sofía Andrade", agent: "Ana Torres", tone: "violet" },
+  { time: "10:30", title: "Sesión estratégica", client: "Daniel Romero", agent: "Carlos Mendoza", tone: "teal" },
+  { time: "13:00", title: "Sesión estratégica", client: "Lucía Reyes", agent: "María Paz", tone: "orange" },
+  { time: "15:30", title: "Sesión estratégica", client: "Andrés Vega", agent: "Ana Torres", tone: "violet" },
 ];
 
 const days = [
@@ -84,7 +84,7 @@ export default function Home() {
           <div className="top-actions">
             <button className="icon-button" aria-label="Notificaciones">♢<span className="notification-dot" /></button>
             <button className="secondary-button" onClick={() => setView("public")}>↗ Ver página pública</button>
-            <button className="primary-button" onClick={() => setView("services")}>＋ Crear tipo de reunión</button>
+            <button className="primary-button" onClick={() => setView("services")}>＋ Crear agenda Round Robin</button>
           </div>
         </header>
 
@@ -157,7 +157,7 @@ function Overview({ onPublic }: { onPublic: () => void }) {
 
       <section className="bottom-grid">
         <article className="panel rotation-panel">
-          <div className="panel-head"><div><h3>Distribución de asignaciones</h3><p>Últimos 30 días</p></div><span className="select-chip">Todos los servicios⌄</span></div>
+          <div className="panel-head"><div><h3>Distribución Round Robin</h3><p>Últimos 30 días</p></div><span className="select-chip">Equipo principal⌄</span></div>
           <div className="bars">
             {agents.slice(0, 3).map((agent, index) => (
               <div className="bar-row" key={agent.name}>
@@ -172,7 +172,7 @@ function Overview({ onPublic }: { onPublic: () => void }) {
         </article>
         <article className="public-card">
           <span className="route-art"><i /><i /><i /><b>✓</b></span>
-          <div><span className="live-badge"><i /> PUBLICADA</span><h3>Consulta inicial LLC</h3><p>30 min · Google Meet</p><button onClick={onPublic}>Abrir página de reserva ↗</button></div>
+          <div><span className="live-badge"><i /> ROUND ROBIN ACTIVO</span><h3>Sesión estratégica</h3><p>3 agentes · Prioridad estricta</p><button onClick={onPublic}>Abrir agenda del equipo ↗</button></div>
         </article>
       </section>
     </div>
@@ -205,8 +205,7 @@ function Services({ onPublic }: { onPublic: () => void }) {
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   }
-  const services = [{ name: "Consulta inicial LLC", duration: "30 min", agents: 3, color: "violet" }, { name: "Asesoría tributaria", duration: "45 min", agents: 2, color: "teal" }, { name: "Apertura bancaria", duration: "30 min", agents: 3, color: "orange" }];
-  return <div className="content"><section className="section-intro"><div><h2>Tipos de reunión</h2><p>Cada agenda tiene su propio enlace público para compartir con clientes.</p></div><button className="primary-button">＋ Crear tipo de reunión</button></section><article className="share-link-card"><div><span className="live-badge"><i /> ENLACE PÚBLICO ACTIVO</span><h3>Comparte tu agenda</h3><p>Personaliza la terminación del enlace, cópialo o abre la experiencia del cliente.</p></div><div className="public-url-editor"><span>teamroute-app.xbuenano.chatgpt.site/book/</span><input aria-label="Identificador del enlace público" value={slug} onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} /><button onClick={copyLink}>{copied ? "✓ Copiado" : "Copiar enlace"}</button><a href={`/book/${slug}`} target="_blank">Abrir ↗</a></div></article><section className="service-list">{services.map((s, i) => <article className="panel service-row" key={s.name}><span className={`service-symbol ${s.color}`}>◇</span><div><span className="live-badge"><i /> PUBLICADA</span><h3>{s.name}</h3><p>{s.duration} · Google Meet · {s.agents} agentes</p>{i === 0 && <small className="service-url">/book/{slug}</small>}</div><div className="service-actions">{i === 0 ? <a href={`/book/${slug}`} target="_blank">Abrir agenda ↗</a> : <button onClick={onPublic}>Vista previa ↗</button>}<button className="row-more">•••</button></div></article>)}</section></div>;
+  return <div className="content"><section className="section-intro"><div><h2>Agendas Round Robin</h2><p>Cada agenda distribuye automáticamente las reservas entre los agentes disponibles del equipo.</p></div><button className="primary-button">＋ Crear agenda Round Robin</button></section><article className="round-robin-focus"><span className="focus-icon">⇄</span><div><p className="eyebrow">PRODUCTO ESPECIALIZADO</p><h3>Una sola modalidad: Round Robin para equipos</h3><p>TeamRoute asigna cada reserva a un único agente según disponibilidad, prioridad y última asignación. No existen reuniones colectivas ni agendas individuales.</p></div><span className="focus-badge">ÚNICA MODALIDAD</span></article><article className="share-link-card"><div><span className="live-badge"><i /> ENLACE PÚBLICO ACTIVO</span><h3>Comparte la agenda del equipo</h3><p>Personaliza la terminación del enlace, cópialo o abre la experiencia del cliente.</p></div><div className="public-url-editor"><span>teamroute-app.xbuenano.chatgpt.site/book/</span><input aria-label="Identificador del enlace público" value={slug} onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} /><button onClick={copyLink}>{copied ? "✓ Copiado" : "Copiar enlace"}</button><a href={`/book/${slug}`} target="_blank">Abrir ↗</a></div></article><article className="panel robin-agenda-card"><div className="robin-agenda-main"><span className="service-symbol violet">⇄</span><div><span className="live-badge"><i /> ROUND ROBIN ACTIVO</span><h3>Sesión estratégica del equipo</h3><p>30 min · Google Meet · 3 agentes · Prioridad estricta</p><small className="service-url">/book/{slug}</small></div></div><div className="rotation-preview"><p>ORDEN DE ASIGNACIÓN</p><div><span className="avatar" style={{ background: "#7c3aed" }}>AT</span><span className="avatar" style={{ background: "#0f766e" }}>CM</span><span className="avatar" style={{ background: "#c2410c" }}>MP</span><small>Disponibilidad → Prioridad → Última asignación</small></div></div><div className="service-actions"><a href={`/book/${slug}`} target="_blank">Abrir agenda ↗</a><button className="secondary-button">Configurar rotación</button><button className="row-more">•••</button></div></article></div>;
 }
 
 function PublicBooking({ selectedDay, setSelectedDay, selectedSlot, setSelectedSlot, confirmed, onConfirm, onBack }: { selectedDay: number; setSelectedDay: (n: number) => void; selectedSlot: string; setSelectedSlot: (s: string) => void; confirmed: boolean; onConfirm: () => void; onBack: () => void }) {

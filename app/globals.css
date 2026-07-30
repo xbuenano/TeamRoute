@@ -146,6 +146,20 @@ button:focus-visible { outline: 3px solid #a78bfa; outline-offset: 2px; }
 .service-actions { display: flex; align-items: center; gap: 14px; }.service-actions button:first-child { border: 1px solid var(--line); background: white; color: var(--primary); border-radius: 7px; padding: 9px 12px; font-size: 9px; cursor: pointer; }
 .service-actions a { border: 1px solid var(--line); background: white; color: var(--primary); border-radius: 7px; padding: 9px 12px; font-size: 9px; text-decoration: none; font-weight: 650; }
 .service-url { display: inline-block; margin-top: 7px; padding: 4px 7px; border-radius: 5px; background: #f4f1ff; color: #6d43d8; font-size: 8px; }
+.round-robin-focus { margin-bottom: 16px; padding: 17px 20px; display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 14px; border: 1px solid #ded8f2; border-radius: 12px; background: #f7f4ff; }
+.focus-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px; background: #e7defd; color: #6235ce; font-size: 20px; font-weight: 750; }
+.round-robin-focus h3 { margin: 3px 0 4px; font-size: 14px; }
+.round-robin-focus > div > p:last-child { max-width: 720px; margin: 0; color: #77738a; font-size: 9px; line-height: 1.5; }
+.focus-badge { padding: 6px 9px; border-radius: 12px; background: #e7defd; color: #6235ce; font-size: 7px; font-weight: 800; letter-spacing: .6px; }
+.robin-agenda-card { padding: 20px; display: grid; grid-template-columns: minmax(260px, 1fr) minmax(260px, .8fr) auto; gap: 24px; align-items: center; }
+.robin-agenda-main { display: flex; align-items: center; gap: 14px; }
+.robin-agenda-main h3 { margin: 5px 0 4px; font-size: 14px; }
+.robin-agenda-main p { margin: 0; color: #8e949f; font-size: 9px; }
+.rotation-preview { padding-left: 22px; border-left: 1px solid var(--line); }
+.rotation-preview > p { margin: 0 0 8px; color: #999faa; font-size: 7px; font-weight: 750; letter-spacing: .8px; }
+.rotation-preview > div { display: flex; align-items: center; }
+.rotation-preview .avatar + .avatar { margin-left: -8px; }
+.rotation-preview small { margin-left: 8px; color: #777e89; font-size: 8px; }
 .share-link-card { margin-bottom: 16px; padding: 19px 20px; border-radius: 12px; background: #292141; color: white; display: grid; grid-template-columns: minmax(240px, .75fr) minmax(400px, 1.25fr); align-items: center; gap: 24px; }
 .share-link-card h3 { margin: 7px 0 4px; font-size: 15px; }
 .share-link-card p { margin: 0; color: #bcb6ca; font-size: 9px; }
@@ -266,6 +280,8 @@ button:focus-visible { outline: 3px solid #a78bfa; outline-offset: 2px; }
   .time-stage { grid-column: 2; border-left: 0; border-top: 1px solid #eceaf0; padding-top: 28px; }
   .time-stage:not(.visible) { display: none; }
   .time-list { grid-template-columns: repeat(3, 1fr); }
+  .robin-agenda-card { grid-template-columns: 1fr auto; }
+  .rotation-preview { grid-column: 1; grid-row: 2; padding: 15px 0 0; border-left: 0; border-top: 1px solid var(--line); }
 }
 @media (max-width: 760px) {
   .app-shell { display: block; }
@@ -289,6 +305,10 @@ button:focus-visible { outline: 3px solid #a78bfa; outline-offset: 2px; }
   .service-row { grid-template-columns: 45px 1fr; }
   .service-actions { grid-column: 2; }
   .share-link-card { grid-template-columns: 1fr; }
+  .round-robin-focus { grid-template-columns: 40px 1fr; }
+  .focus-badge { grid-column: 2; justify-self: start; }
+  .robin-agenda-card { grid-template-columns: 1fr; }
+  .robin-agenda-card .service-actions { grid-column: 1; flex-wrap: wrap; }
   .public-url-editor { display: grid; grid-template-columns: 1fr 1fr; padding: 8px; gap: 6px; }
   .public-url-editor > span { grid-column: 1 / -1; padding: 0; white-space: normal; }
   .public-url-editor input { grid-column: 1 / -1; width: 100%; border: 1px solid #504767; border-radius: 5px; padding: 0 8px; }

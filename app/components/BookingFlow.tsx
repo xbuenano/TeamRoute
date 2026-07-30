@@ -145,7 +145,7 @@ function BookingSummary({ date, time }: { date: number | null; time: string | nu
         <li><span className="meet-dot">●</span> Google Meet</li>
         {date && time && <li className="chosen-slot"><span>▣</span> Vie. {date} ago, {time} −05</li>}
       </ul>
-      <div className="round-robin-note"><span className="avatar" style={{ background: "#7c3aed" }}>AT</span><div><strong>Asignación inteligente</strong><small>El especialista disponible será asignado al confirmar.</small></div></div>
+      <div className="round-robin-note"><span className="avatar" style={{ background: "#7c3aed" }}>AT</span><div><strong>Agenda Round Robin</strong><small>Un agente disponible del equipo será asignado automáticamente.</small></div></div>
     </aside>
   );
 }

@@ -7,7 +7,7 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata: Metadata = {
   title: "TeamRoute · Intelligent meeting routing",
-  description: "Asignación y agendamiento inteligente de reuniones para equipos.",
+  description: "Agendamiento Round Robin especializado para equipos.",
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 
