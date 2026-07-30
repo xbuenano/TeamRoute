@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { BookingFlow } from "./components/BookingFlow";
 import { RoundRobinBuilder } from "./components/RoundRobinBuilder";
+import { AccountSettings } from "./components/AccountSettings";
 
-type View = "overview" | "bookings" | "agents" | "services" | "builder" | "public";
+type View = "overview" | "bookings" | "agents" | "services" | "builder" | "settings" | "public";
 
 const navItems: { id: View; label: string; icon: string }[] = [
   { id: "overview", label: "Resumen", icon: "⌂" },
@@ -39,7 +40,7 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState(2);
   const [selectedSlot, setSelectedSlot] = useState("10:30");
   const [confirmed, setConfirmed] = useState(false);
-  const title = useMemo(() => view === "builder" ? "Editar agenda Round Robin" : navItems.find((item) => item.id === view)?.label ?? "Reserva pública", [view]);
+  const title = useMemo(() => view === "builder" ? "Editar agenda Round Robin" : view === "settings" ? "Configuración de la cuenta" : navItems.find((item) => item.id === view)?.label ?? "Reserva pública", [view]);
 
   return (
     <main className="app-shell">
@@ -60,7 +61,7 @@ export default function Home() {
           <p className="nav-label second">CONFIGURACIÓN</p>
           <button className="nav-item"><span className="nav-icon">◷</span>Disponibilidad</button>
           <button className="nav-item"><span className="nav-icon">⇄</span>Reglas de rotación</button>
-          <button className="nav-item"><span className="nav-icon">⚙</span>Configuración</button>
+          <button className={view === "settings" ? "nav-item active" : "nav-item"} onClick={() => setView("settings")}><span className="nav-icon">⚙</span>Configuración</button>
         </nav>
 
         <div className="sidebar-footer">
@@ -94,6 +95,7 @@ export default function Home() {
         {view === "agents" && <Agents />}
         {view === "services" && <Services onEdit={() => setView("builder")} />}
         {view === "builder" && <RoundRobinBuilder onClose={() => setView("services")} onPreview={() => setView("public")} />}
+        {view === "settings" && <AccountSettings />}
         {view === "public" && (
           <PublicBooking
             selectedDay={selectedDay}
