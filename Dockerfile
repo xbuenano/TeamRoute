@@ -10,6 +10,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --include=dev
 
 COPY . ./
+ENV TEAMROUTE_RUNTIME=node
 RUN npm run build
 
 ENV NODE_ENV=production

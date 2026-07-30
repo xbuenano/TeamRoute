@@ -1,9 +1,7 @@
 import { readProfile, updateProfile, type ProfileInput } from "@/db/profiles";
 
 function errorMessage(error: unknown) {
-  if (!(error instanceof Error)) return "No fue posible procesar la configuraci\u00f3n.";
-  const cause = error.cause instanceof Error ? error.cause.message : "";
-  return cause ? `${error.message}: ${cause}` : error.message;
+  return error instanceof Error ? "No fue posible acceder al perfil guardado." : "No fue posible procesar la configuraci\u00f3n.";
 }
 
 export async function GET() {
