@@ -17,4 +17,4 @@ ENV PORT=3000
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["sh", "-c", "npm run db:migrate && npm run start"]

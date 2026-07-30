@@ -44,12 +44,19 @@ npm run build
 
 - React y Next.js sobre vinext.
 - TypeScript.
-- Despliegue mediante OpenAI Sites.
-- Estado demostrativo en el cliente para esta primera versión visual.
+- PostgreSQL y Drizzle ORM para perfiles, preferencias de cuenta y visibilidad de agendas públicas.
+- Despliegue de producción mediante Coolify.
 
-La conexión persistente con PostgreSQL, autenticación de usuarios, OAuth de
-Google Calendar, FreeBusy, creación de eventos, Google Meet y bloqueos de
-concurrencia corresponden a la siguiente etapa del backend.
+Para ejecutar el backend persistente, copia `.env.example` a `.env.local`, define
+`DATABASE_URL`, genera las migraciones y aplícalas:
+
+```bash
+npm run db:generate
+npm run db:migrate
+```
+
+La autenticación de usuarios, OAuth de Google Calendar, FreeBusy, creación de
+eventos, Google Meet y bloqueos de concurrencia corresponden a la siguiente etapa.
 
 ## Seguridad
 
